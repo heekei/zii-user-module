@@ -1,6 +1,5 @@
 import { MongoClient, MongoCallback, MongoError, CursorResult } from 'mongodb';
 import config from '../config/config';
-import { callbackify } from 'util';
 // const MongoClient = mongodb.MongoClient;
 
 // var mongodbServer = new mongodb.Server(config.dbHost, config.dbPort);

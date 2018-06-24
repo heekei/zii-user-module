@@ -2,7 +2,7 @@
 // import config from '../config/config';
 class User {
     // id: number = 0;
-    username!: string;
+    userName!: string;
     age?: number;
     gender?: '男' | '女';
 }

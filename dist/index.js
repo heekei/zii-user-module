@@ -34,15 +34,48 @@ function getCollection(mClient, collection = 'users') {
  */
 function login(username, password) {
     return __awaiter(this, void 0, void 0, function* () {
-        return yield Database_1.default.doInDbConn().then((mclt) => __awaiter(this, void 0, void 0, function* () {
-            let conn = getCollection(mclt, 'users');
+        const mclt = yield Database_1.default.doInDbConn();
+        const conn = getCollection(mclt, 'users');
+        try {
             let isValid = yield conn.find({ username: username, password: password }).toArray();
-            mclt.close();
             return !!isValid.length;
-        }), (err) => __awaiter(this, void 0, void 0, function* () { return yield err; }));
+        }
+        catch (error) {
+            return error;
+        }
+        finally {
+            mclt.close();
+        }
     });
 }
 exports.login = login;
+/**
+ * 自增索引
+ *
+ * @param {any} db 数据库
+ * @param {any} table 表名
+ * @returns {Promise}
+ */
+function getNextSequenceValue(collectionName) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const mclt = yield Database_1.default.doInDbConn();
+        const conn = getCollection(mclt, 'counters');
+        try {
+            let result = yield conn.findAndModify({ _id: collectionName }, [], { $inc: { sequence_value: 1 } }, {
+                upsert: true,
+                new: true //返回更新后的值
+            });
+            return result.value.sequence_value;
+        }
+        catch (error) {
+            let err = error;
+            return err;
+        }
+        finally {
+            mclt.close();
+        }
+    });
+}
 /**
  * 添加用户
  *
@@ -51,13 +84,20 @@ exports.login = login;
  */
 function addUser(user) {
     return __awaiter(this, void 0, void 0, function* () {
-        return yield Database_1.default.doInDbConn().then((mclt) => __awaiter(this, void 0, void 0, function* () {
-            let conn = getCollection(mclt, 'users');
-            conn.createIndex('username');
+        const mclt = yield Database_1.default.doInDbConn();
+        const conn = getCollection(mclt, 'users');
+        let uidLock = yield conn.createIndex('userName', { unique: true });
+        try {
             let result = yield conn.insertMany(Array.isArray(user) ? user : [user]);
-            mclt.close();
             return result;
-        }), (err) => __awaiter(this, void 0, void 0, function* () { return yield err; }));
+        }
+        catch (error) {
+            let err = error;
+            return err;
+        }
+        finally {
+            mclt.close();
+        }
     });
 }
 exports.addUser = addUser;
