@@ -7,10 +7,10 @@ const mongodb_1 = require("mongodb");
 const config_1 = __importDefault(require("../config/config"));
 function doInDbConn(callback) {
     if (callback) {
-        return mongodb_1.MongoClient.connect(config_1.default.dbUri, callback);
+        return mongodb_1.MongoClient.connect(config_1.default.dbUri, { useNewUrlParser: true }, callback);
     }
     else {
-        return mongodb_1.MongoClient.connect(config_1.default.dbUri);
+        return mongodb_1.MongoClient.connect(config_1.default.dbUri, { useNewUrlParser: true });
     }
 }
 // export default {

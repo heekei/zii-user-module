@@ -37,7 +37,8 @@ function login(username, password) {
         const mclt = yield Database_1.default.doInDbConn();
         const conn = getCollection(mclt, 'users');
         try {
-            let isValid = yield conn.find({ username: username, password: password }).toArray();
+            let isValid = yield conn.find({ username, password }).toArray();
+            console.log('isValid: ', isValid);
             return !!isValid.length;
         }
         catch (error) {
@@ -49,33 +50,6 @@ function login(username, password) {
     });
 }
 exports.login = login;
-/**
- * 自增索引
- *
- * @param {any} db 数据库
- * @param {any} table 表名
- * @returns {Promise}
- */
-function getNextSequenceValue(collectionName) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const mclt = yield Database_1.default.doInDbConn();
-        const conn = getCollection(mclt, 'counters');
-        try {
-            let result = yield conn.findAndModify({ _id: collectionName }, [], { $inc: { sequence_value: 1 } }, {
-                upsert: true,
-                new: true //返回更新后的值
-            });
-            return result.value.sequence_value;
-        }
-        catch (error) {
-            let err = error;
-            return err;
-        }
-        finally {
-            mclt.close();
-        }
-    });
-}
 /**
  * 添加用户
  *

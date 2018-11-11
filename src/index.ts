@@ -24,37 +24,12 @@ async function login(username: string, password: string) {
     const mclt = await db.doInDbConn();
     const conn = getCollection(mclt, 'users');
     try {
-        let isValid = await conn.find({ username: username, password: password }).toArray();
+        let isValid = await conn.find({ username, password }).toArray();
+        console.log('isValid: ', isValid);
         return !!isValid.length;
     }
     catch (error) {
         return error;
-    }
-    finally {
-        mclt.close();
-    }
-}
-
-/**
- * 自增索引
- * 
- * @param {any} db 数据库
- * @param {any} table 表名
- * @returns {Promise}
- */
-async function getNextSequenceValue(collectionName: string) {
-    const mclt = await db.doInDbConn();
-    const conn = getCollection(mclt, 'counters');
-    try {
-        let result = await conn.findAndModify({ _id: collectionName }, [], { $inc: { sequence_value: 1 } }, {
-            upsert: true, //不存在则新建
-            new: true //返回更新后的值
-        });
-        return result.value.sequence_value;
-    }
-    catch (error) {
-        let err: MongoError = error;
-        return err;
     }
     finally {
         mclt.close();

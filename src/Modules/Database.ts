@@ -15,9 +15,9 @@ function doInDbConn(callback: MongoCallback<MongoClient>): void;
 function doInDbConn(): Promise<MongoClient>;
 function doInDbConn(callback?: MongoCallback<MongoClient>) {
     if (callback) {
-        return MongoClient.connect(config.dbUri, callback);
+        return MongoClient.connect(config.dbUri, { useNewUrlParser: true }, callback);
     } else {
-        return MongoClient.connect(config.dbUri);
+        return MongoClient.connect(config.dbUri, { useNewUrlParser: true });
     }
 }
 // export default {
