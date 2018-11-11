@@ -1,4 +1,4 @@
 node_modules
 .vscode
-src/config/config.ts
-dist
+/src/config/config.ts
+/dist/
